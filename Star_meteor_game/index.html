@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>STAR BLAST // Hyper-Drive Arcade Space Shooter</title>
+
+  <!-- Google Fonts: Orbitron & Rajdhani -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./src/styles/main.css">
+  <link rel="stylesheet" href="./src/styles/ui.css">
+</head>
+<body>
+  <!-- App Container -->
+  <div id="app">
+    <!-- Main Render Canvas -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Top Left Global Controls -->
+    <div class="top-bar-controls">
+      <button id="btn-audio-toggle" class="icon-btn" title="Toggle Sound (M)">
+        <span class="icon">🔊</span>
+      </button>
+      <div class="currency-display" title="Star Dust Crystals">
+        <span class="crystal-icon">💎</span>
+        <span id="stardust-count">0</span>
+      </div>
+    </div>
+
+    <!-- MAIN MENU OVERLAY -->
+    <div id="screen-menu" class="screen active">
+      <div class="menu-hero">
+        <div class="title-container">
+          <div class="title-sub">NEON ARCADE SURVIVAL</div>
+          <h1 class="title-main">STAR<span class="highlight">BLAST</span></h1>
+          <div class="title-badge">v2.0 HYPER-DRIVE</div>
+        </div>
+
+        <div class="ship-preview-card">
+          <canvas id="menu-ship-canvas" width="220" height="220"></canvas>
+          <div class="active-ship-info">
+            <span class="ship-badge" id="menu-ship-rarity">COMMON</span>
+            <h3 id="menu-ship-name">APEX VECTOR</h3>
+            <p id="menu-ship-desc">Standard issue tactical interceptor equipped with dual plasma cannons.</p>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-start-game" class="btn btn-primary btn-large">
+            <span class="btn-glow"></span>
+            <span class="btn-text">LAUNCH MISSION</span>
+          </button>
+
+          <div class="menu-sub-actions">
+            <button id="btn-open-hangar" class="btn btn-secondary">
+              <span class="icon">🛸</span> HANGAR & SKINS
+            </button>
+            <button id="btn-open-achievements" class="btn btn-secondary">
+              <span class="icon">🏆</span> FEATS & REWARDS
+            </button>
+          </div>
+        </div>
+
+        <div class="controls-hint">
+          <span><kbd>WASD</kbd> / <kbd>Arrows</kbd> Move</span>
+          <span><kbd>Mouse</kbd> / <kbd>Space</kbd> Fire</span>
+          <span><kbd>E</kbd> / <kbd>R-Click</kbd> Ultimate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HANGAR & SKIN SELECTION OVERLAY -->
+    <div id="screen-hangar" class="screen">
+      <div class="hangar-header">
+        <button id="btn-hangar-back" class="btn btn-back">← BACK TO MENU</button>
+        <h2>SPACESHIP ARSENAL & SKINS</h2>
+        <div class="currency-display">
+          <span class="crystal-icon">💎</span>
+          <span id="hangar-stardust">0</span>
+        </div>
+      </div>
+
+      <div class="hangar-content">
+        <!-- Live Ship Viewport -->
+        <div class="hangar-viewport">
+          <div class="canvas-wrapper">
+            <canvas id="hangar-ship-canvas" width="340" height="340"></canvas>
+            <div class="viewport-grid"></div>
+          </div>
+
+          <div class="ship-details-panel">
+            <div class="ship-header-row">
+              <span id="hangar-ship-rarity" class="ship-badge">RARE</span>
+              <h3 id="hangar-ship-name">CYBER PHOENIX</h3>
+            </div>
+            <p id="hangar-ship-desc" class="ship-desc">High-speed thermal interceptor with fiery spread cannons.</p>
+
+            <div class="ship-stats-list">
+              <div class="stat-row">
+                <span class="stat-label">SPEED</span>
+                <div class="stat-bar-track"><div id="stat-speed" class="stat-bar-fill"></div></div>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">FIREPOWER</span>
+                <div class="stat-bar-track"><div id="stat-firepower" class="stat-bar-fill"></div></div>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">SHIELD</span>
+                <div class="stat-bar-track"><div id="stat-shield" class="stat-bar-fill"></div></div>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">ENERGY</span>
+                <div class="stat-bar-track"><div id="stat-energy" class="stat-bar-fill"></div></div>
+              </div>
+            </div>
+
+            <div class="ability-card">
+              <div class="ability-title">SPECIAL ABILITY</div>
+              <div id="hangar-ship-ability" class="ability-desc">Solar Flare Nova Blast</div>
+            </div>
+
+            <button id="btn-equip-ship" class="btn btn-primary btn-full">
+              <span id="equip-btn-text">EQUIP SPACESHIP</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Skins Cards Grid -->
+        <div class="skins-selector-panel">
+          <div class="panel-title">SELECT SHIP SKIN</div>
+          <div id="skins-grid" class="skins-grid">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS OVERLAY -->
+    <div id="screen-achievements" class="screen">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>FEATS & ACHIEVEMENTS</h2>
+          <button id="btn-close-achievements" class="btn-close">✕</button>
+        </div>
+        <div id="achievements-list" class="achievements-list">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- IN-GAME HUD OVERLAY -->
+    <div id="game-hud" class="hud-layer hidden">
+      <!-- Top HUD Header -->
+      <div class="hud-top">
+        <div class="hud-stat-box">
+          <span class="hud-label">SCORE</span>
+          <span id="hud-score" class="hud-value">000000</span>
+        </div>
+
+        <div class="hud-stat-box wave-box">
+          <span class="hud-label">WAVE</span>
+          <span id="hud-wave" class="hud-value highlight">1</span>
+        </div>
+
+        <div class="hud-stat-box">
+          <span class="hud-label">HIGH SCORE</span>
+          <span id="hud-highscore" class="hud-value">000000</span>
+        </div>
+      </div>
+
+      <!-- Combo Multiplier Display -->
+      <div id="hud-combo-container" class="combo-container hidden">
+        <span id="hud-combo-val" class="combo-val">x2</span>
+        <span class="combo-label">COMBO!</span>
+      </div>
+
+      <!-- Boss Health Bar -->
+      <div id="hud-boss-bar-container" class="boss-bar-container hidden">
+        <div class="boss-info">
+          <span id="hud-boss-name" class="boss-name">COSMIC OVERLORD</span>
+          <span id="hud-boss-hp-text" class="boss-hp-text">100%</span>
+        </div>
+        <div class="boss-bar-track">
+          <div id="hud-boss-bar-fill" class="boss-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Bottom HUD Status Bars -->
+      <div class="hud-bottom">
+        <!-- Shield & Hull Bar -->
+        <div class="status-meter-group">
+          <div class="meter-header">
+            <span class="meter-title">SHIELD / HULL</span>
+            <span id="hud-hp-percent">100%</span>
+          </div>
+          <div class="meter-track hp-track">
+            <div id="hud-hp-fill" class="meter-fill hp-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Ultimate Ability Charge -->
+        <div class="status-meter-group">
+          <div class="meter-header">
+            <span class="meter-title">SUPER ULTIMATE</span>
+            <span id="hud-ult-status">CHARGING [E]</span>
+          </div>
+          <div class="meter-track ult-track">
+            <div id="hud-ult-fill" class="meter-fill ult-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Weapon / Powerup Badges -->
+      <div id="hud-active-buffs" class="buffs-container"></div>
+
+      <!-- Pause Button -->
+      <button id="btn-pause-game" class="icon-btn hud-pause-btn" title="Pause Game (P/Esc)">
+        <span>⏸</span>
+      </button>
+
+      <!-- On-Screen Touch Joystick for Mobile/Tablet -->
+      <div id="touch-controls" class="touch-layer hidden">
+        <div id="touch-joystick-zone" class="joystick-zone">
+          <div id="touch-joystick-knob" class="joystick-knob"></div>
+        </div>
+        <div class="touch-action-buttons">
+          <button id="btn-touch-fire" class="touch-btn touch-btn-fire">FIRE</button>
+          <button id="btn-touch-ult" class="touch-btn touch-btn-ult">ULT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAUSE MENU OVERLAY -->
+    <div id="screen-pause" class="screen">
+      <div class="modal-card text-center">
+        <h2 class="glow-text">MISSION PAUSED</h2>
+        <div class="menu-actions">
+          <button id="btn-resume-game" class="btn btn-primary btn-large">RESUME MISSION</button>
+          <button id="btn-restart-game" class="btn btn-secondary">RESTART</button>
+          <button id="btn-quit-to-menu" class="btn btn-danger">QUIT TO MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER OVERLAY -->
+    <div id="screen-gameover" class="screen">
+      <div class="modal-card text-center">
+        <div id="gameover-title-badge" class="result-badge danger">HULL DESTROYED</div>
+        <h1 id="gameover-heading" class="glow-text-danger">MISSION FAILED</h1>
+
+        <div class="game-summary-stats">
+          <div class="summary-row">
+            <span>FINAL SCORE</span>
+            <strong id="summary-score" class="highlight">0</strong>
+          </div>
+          <div class="summary-row">
+            <span>WAVES SURVIVED</span>
+            <strong id="summary-wave">0</strong>
+          </div>
+          <div class="summary-row">
+            <span>ENEMIES ELIMINATED</span>
+            <strong id="summary-kills">0</strong>
+          </div>
+          <div class="summary-row">
+            <span>STARDUST EARNED</span>
+            <strong id="summary-stardust" class="gold-text">+0 💎</strong>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-play-again" class="btn btn-primary btn-large">PLAY AGAIN</button>
+          <button id="btn-gameover-hangar" class="btn btn-secondary">OPEN HANGAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/js/main.js"></script>
+</body>
+</html>
